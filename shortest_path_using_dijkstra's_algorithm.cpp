@@ -1,8 +1,7 @@
 #include <iostream>
 #include <climits>
 
-#define V 6  // Number of vertices in the graph
-
+#define V 6 
 using namespace std;
 
 int minDistance(int dist[], bool sptSet[]) {
@@ -32,9 +31,9 @@ void printSolution(int dist[], int n, int parent[], int destination) {
 }
 
 void dijkstra(int graph[V][V], int src, int destination) {
-    int dist[V];    // The output array dist[i] holds the shortest distance from src to i
-    bool sptSet[V]; // sptSet[i] will be true if vertex i is included in the shortest path tree or the shortest distance from src to i is finalized
-    int parent[V];   // Parent array to store the shortest path tree
+    int dist[V];    
+    bool sptSet[V];
+    int parent[V];  
 
     for (int i = 0; i < V; i++) {
         dist[i] = INT_MAX;

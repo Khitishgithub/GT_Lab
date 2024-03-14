@@ -1,63 +1,81 @@
 
-#include <bits/stdc++.h>
-#include <vector>
+#include <iostream>
 using namespace std;
-const int N = 5;
 
-bool Hamiltonian_path(
-	vector<vector<int> >& adj, int N)
-{
-	int dp[N][(1 << N)];
+const int MAX_V = 10; 
 
-	memset(dp, 0, sizeof dp);
+bool isSafe(int v, bool graph[MAX_V][MAX_V], int path[], int pos, int V) {
+   
+    if (graph[path[pos - 1]][v] == 0)
+        return false;
 
-	for (int i = 0; i < N; i++)
-		dp[i][(1 << i)] = true;
+    for (int i = 0; i < pos; ++i)
+        if (path[i] == v)
+            return false;
 
-	for (int i = 0; i < (1 << N); i++) {
-
-		for (int j = 0; j < N; j++) {
-			if (i & (1 << j)) {
-				for (int k = 0; k < N; k++) {
-
-					if (i & (1 << k)
-						&& adj[k][j]
-						&& j != k
-						&& dp[k][i ^ (1 << j)]) {
-						dp[j][i] = true;
-						break;
-					}
-				}
-			}
-		}
-	}
-	for (int i = 0; i < N; i++) {
-		if (dp[i][(1 << N) - 1])
-			return true;
-	}
-	return false;
+    return true;
 }
 
-int main()
-{   
-    cout << "Enter the number of vertices: ";
-    int n;
-    cin >> n;
+bool hamiltonianCycleUtil(bool graph[MAX_V][MAX_V], int path[], int pos, int V) {
+   
+    if (pos == V) {
+       
+        if (graph[path[pos - 1]][path[0]] == 1)
+            return true;
+        else
+            return false;
+    }
 
-    vector<vector<int>> adjmat(n,vector<int>(n));
-    cout << "Enter the adjacency matrix: ";
-    for(int i=0; i<n; i++){
-        for(int j=0; j<n; j++){
-            cin >> adjmat[i][j]; 
+    for (int v = 1; v < V; ++v) {
+        if (isSafe(v, graph, path, pos, V)) {
+            path[pos] = v;
+
+            
+            if (hamiltonianCycleUtil(graph, path, pos + 1, V))
+                return true;
+
+            path[pos] = -1;
         }
     }
-	
-	int N = adjmat.size();
 
-	if (Hamiltonian_path(adjmat, N))
-		cout << "Yes, Graph contains Hamiltonian path";
-	else
-		cout << "NO, Graph does not contain Hamiltonian path";
+    return false;
+}
 
-	return 0;
+bool hamiltonianCycle(bool graph[MAX_V][MAX_V], int V) {
+    int path[MAX_V];
+    for (int i = 0; i < V; ++i)
+        path[i] = -1;
+
+    // Start from the first vertex (index 0)
+    path[0] = 0;
+
+    if (!hamiltonianCycleUtil(graph, path, 1, V)) {
+        cout << "No Hamiltonian cycle exists in the graph." << endl;
+        return false;
+    }
+
+    cout << "Hamiltonian cycle exists in the graph: ";
+    for (int i = 0; i < V; ++i)
+        cout << path[i] << " ";
+    cout << path[0] << endl;
+
+    return true;
+}
+
+int main() {
+    int V;
+    cout << "Enter the number of vertices in the graph: ";
+    cin >> V;
+
+    bool graph[MAX_V][MAX_V];
+    cout << "Enter the adjacency matrix of the graph:" << endl;
+    for (int i = 0; i < V; ++i) {
+        for (int j = 0; j < V; ++j) {
+            cin >> graph[i][j];
+        }
+    }
+
+    hamiltonianCycle(graph, V);
+
+    return 0;
 }
